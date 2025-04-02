@@ -25,47 +25,29 @@
         }
 
         h1 {
-            font-size: 80px;
+            font-size: 50px;
             font-weight: bold;
-            margin-top: 30px; /* Move title up */
+            margin-bottom: 30px;
             text-transform: uppercase;
         }
 
-        #timer-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0px;
-            margin-top: 60px;
-        }
-
-        .time-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .time {
+        #timer {
             font-family: 'DSEG7', sans-serif;
-            font-size: 190px;
+            font-size: 180px;
             font-weight: bold;
             color: #ff0000;
             background: black;
-            padding: 0px 2px;
+            padding: 20px 30px;
             border-radius: 5px;
             display: inline-block;
-        }
-
-        .label {
-            font-size: 50px;
-            color: white;
-            margin-top: 30px;
+            text-shadow: 0px 0px 15px #cc0000;
+            letter-spacing: 8px;
         }
 
         #video-container {
-            margin-top: 80px; /* Pushed video further down */
-            width: 24%; /* Reduced to 0.8x original size */
-            max-width: 240px;
+            margin-top: 30px;
+            width: 30%;
+            max-width: 300px;
         }
 
         video {
@@ -73,43 +55,16 @@
             height: auto;
             border: 3px solid white;
             border-radius: 10px;
-            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <h1>Countdown to ForsaTEK V3.0</h1>
-    <div id="timer-container">
-        <div class="time-box">
-            <span id="days" class="time">00</span>
-            <span class="label">Days</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="hours" class="time">00</span>
-            <span class="label">Hours</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="minutes" class="time">00</span>
-            <span class="label">Minutes</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="seconds" class="time">00</span>
-            <span class="label">Seconds</span>
-        </div>
-    </div>
+    <div id="timer">00:00:00:00</div>
 
     <!-- Video Section -->
     <div id="video-container">
-        <video autoplay loop muted>
+        <video controls loop autoplay muted>
             <source src="{{ url_for('static', filename='forsatek1.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -123,10 +78,7 @@
                 let diff = eventTime - now;
 
                 if (diff <= 0) {
-                    document.getElementById("days").innerHTML = "00";
-                    document.getElementById("hours").innerHTML = "00";
-                    document.getElementById("minutes").innerHTML = "00";
-                    document.getElementById("seconds").innerHTML = "00";
+                    document.getElementById("timer").innerHTML = "00:00:00:00";
                     return;
                 }
 
@@ -135,10 +87,7 @@
                 let minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
                 let seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
 
-                document.getElementById("days").innerHTML = days;
-                document.getElementById("hours").innerHTML = hours;
-                document.getElementById("minutes").innerHTML = minutes;
-                document.getElementById("seconds").innerHTML = seconds;
+                document.getElementById("timer").innerHTML = `${days}:${hours}:${minutes}:${seconds}`;
             }
 
             updateTimer();
