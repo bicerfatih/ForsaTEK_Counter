@@ -119,37 +119,54 @@
     </div>
 
     <script>
-        function startCountdown(targetDate) {
-            function updateTimer() {
-                let now = new Date().getTime();
-                let eventTime = new Date(targetDate).getTime();
-                let diff = eventTime - now;
+    function countWeekdays(start, end) {
+        let count = 0;
+        let current = new Date(start);
+        current.setHours(0, 0, 0, 0);
 
-                if (diff <= 0) {
-                    document.getElementById("days").innerHTML = "00";
-                    document.getElementById("hours").innerHTML = "00";
-                    document.getElementById("minutes").innerHTML = "00";
-                    document.getElementById("seconds").innerHTML = "00";
-                    return;
-                }
+        while (current <= end) {
+            const day = current.getDay();
+            if (day !== 0 && day !== 6) { // Not Sunday (0) or Saturday (6)
+                count++;
+            }
+            current.setDate(current.getDate() + 1);
+        }
+        return count;
+    }
 
-                let days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                let hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                let minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                let seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+    function startCountdown(targetDate) {
+        function updateTimer() {
+            let now = new Date();
+            let eventTime = new Date(targetDate);
+            eventTime.setHours(0, 0, 0, 0);
 
-                document.getElementById("days").innerHTML = days;
-                document.getElementById("hours").innerHTML = hours;
-                document.getElementById("minutes").innerHTML = minutes;
-                document.getElementById("seconds").innerHTML = seconds;
+            if (now >= eventTime) {
+                document.getElementById("days").innerHTML = "00";
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("minutes").innerHTML = "00";
+                document.getElementById("seconds").innerHTML = "00";
+                return;
             }
 
-            updateTimer();
-            setInterval(updateTimer, 1000);
+            let weekdaysLeft = countWeekdays(now, eventTime);
+            let diff = eventTime.getTime() - now.getTime();
+
+            let hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            let minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            let seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+
+            document.getElementById("days").innerHTML = String(weekdaysLeft).padStart(2, '0');
+            document.getElementById("hours").innerHTML = hours;
+            document.getElementById("minutes").innerHTML = minutes;
+            document.getElementById("seconds").innerHTML = seconds;
         }
 
-        let eventDate = "{{ event_date }}";
-        startCountdown(eventDate);
-    </script>
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    }
+
+    let eventDate = "{{ event_date }}";
+    startCountdown(eventDate);
+</script>
 </body>
 </html>
