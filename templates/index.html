@@ -84,8 +84,29 @@
     <h1>Countdown to ForsaTEK V3.0</h1>
     <div id="timer-container">
         <div class="time-box">
-            <span id="workingDays" class="time">00</span>
+            <span id="days" class="time">00</span>
             <span class="label">Working Days</span>
+        </div>
+        <div class="time-box">
+            <span class="time">:</span>
+        </div>
+        <div class="time-box">
+            <span id="hours" class="time">00</span>
+            <span class="label">Hours</span>
+        </div>
+        <div class="time-box">
+            <span class="time">:</span>
+        </div>
+        <div class="time-box">
+            <span id="minutes" class="time">00</span>
+            <span class="label">Minutes</span>
+        </div>
+        <div class="time-box">
+            <span class="time">:</span>
+        </div>
+        <div class="time-box">
+            <span id="seconds" class="time">00</span>
+            <span class="label">Seconds</span>
         </div>
     </div>
 
@@ -97,30 +118,56 @@
     </div>
 
     <script>
-        function countWorkingDays(startDate, endDate, holidays) {
-            let current = new Date(startDate);
-            let end = new Date(endDate);
+        function countWorkingDays(start, end) {
+            const eidHolidays = [
+                new Date('2025-06-05').toDateString(),
+                new Date('2025-06-06').toDateString()
+            ];
             let count = 0;
+            let current = new Date(start);
+
             while (current <= end) {
                 const day = current.getDay();
-                const dateStr = current.toISOString().split('T')[0];
-                const isWeekend = (day === 5 || day === 6); // Friday or Saturday in UAE
-                const isHoliday = holidays.includes(dateStr);
-                if (!isWeekend && !isHoliday) count++;
+                const dateStr = current.toDateString();
+                if (day !== 5 && day !== 6 && !eidHolidays.includes(dateStr)) {
+                    count++;
+                }
                 current.setDate(current.getDate() + 1);
             }
             return count;
         }
 
-        function startWorkingDayCountdown() {
-            const now = new Date();
-            const deadline = new Date('2025-06-23T09:00:00+04:00');
-            const holidays = ['2025-06-05', '2025-06-06'];
-            const workingDaysLeft = countWorkingDays(now, deadline, holidays);
-            document.getElementById('workingDays').innerText = String(workingDaysLeft).padStart(2, '0');
+        function startCountdown(targetDate) {
+            function updateTimer() {
+                const now = new Date();
+                const end = new Date(targetDate);
+                if (now >= end) {
+                    document.getElementById("days").innerHTML = "00";
+                    document.getElementById("hours").innerHTML = "00";
+                    document.getElementById("minutes").innerHTML = "00";
+                    document.getElementById("seconds").innerHTML = "00";
+                    return;
+                }
+
+                let workingDays = countWorkingDays(now, end);
+
+                let diff = end - now;
+                let hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                let minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                let seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+
+                document.getElementById("days").innerHTML = String(workingDays).padStart(2, '0');
+                document.getElementById("hours").innerHTML = hours;
+                document.getElementById("minutes").innerHTML = minutes;
+                document.getElementById("seconds").innerHTML = seconds;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
         }
 
-        startWorkingDayCountdown();
+        let eventDate = new Date("2025-06-23T09:00:00+04:00");
+        startCountdown(eventDate);
     </script>
 </body>
 </html>
