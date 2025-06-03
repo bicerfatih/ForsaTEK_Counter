@@ -84,29 +84,8 @@
     <h1>Countdown to ForsaTEK V3.0</h1>
     <div id="timer-container">
         <div class="time-box">
-            <span id="days" class="time">00</span>
-            <span class="label">Days</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="hours" class="time">00</span>
-            <span class="label">Hours</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="minutes" class="time">00</span>
-            <span class="label">Minutes</span>
-        </div>
-        <div class="time-box">
-            <span class="time">:</span>
-        </div>
-        <div class="time-box">
-            <span id="seconds" class="time">00</span>
-            <span class="label">Seconds</span>
+            <span id="workingDays" class="time">00</span>
+            <span class="label">Working Days</span>
         </div>
     </div>
 
@@ -118,41 +97,30 @@
     </div>
 
     <script>
-        function getWorkingDays(startDate, endDate, holidays) {
-            let count = 0;
+        function countWorkingDays(startDate, endDate, holidays) {
             let current = new Date(startDate);
-
-            while (current < endDate) {
+            let end = new Date(endDate);
+            let count = 0;
+            while (current <= end) {
                 const day = current.getDay();
                 const dateStr = current.toISOString().split('T')[0];
-                if (day !== 5 && day !== 6 && !holidays.includes(dateStr)) {
-                    count++;
-                }
+                const isWeekend = (day === 5 || day === 6); // Friday or Saturday in UAE
+                const isHoliday = holidays.includes(dateStr);
+                if (!isWeekend && !isHoliday) count++;
                 current.setDate(current.getDate() + 1);
             }
-
             return count;
         }
 
-        function startCountdown(targetDateStr) {
-            function updateTimer() {
-                const now = new Date();
-                const targetDate = new Date(targetDateStr);
-
-                const holidays = ["2025-06-05", "2025-06-06"];
-                const workingDays = getWorkingDays(now, targetDate, holidays);
-
-                document.getElementById("days").innerHTML = String(workingDays).padStart(2, '0');
-                document.getElementById("hours").innerHTML = "00";
-                document.getElementById("minutes").innerHTML = "00";
-                document.getElementById("seconds").innerHTML = "00";
-            }
-
-            updateTimer();
-            setInterval(updateTimer, 60000);
+        function startWorkingDayCountdown() {
+            const now = new Date();
+            const deadline = new Date('2025-06-23T09:00:00+04:00');
+            const holidays = ['2025-06-05', '2025-06-06'];
+            const workingDaysLeft = countWorkingDays(now, deadline, holidays);
+            document.getElementById('workingDays').innerText = String(workingDaysLeft).padStart(2, '0');
         }
 
-        startCountdown("2025-06-23T09:00:00");
+        startWorkingDayCountdown();
     </script>
 </body>
 </html>
