@@ -125,8 +125,10 @@
             ];
             let count = 0;
             let current = new Date(start);
+            const adjustedEnd = new Date(end);
+            adjustedEnd.setDate(adjustedEnd.getDate() - 1); // Exclude 23 June
 
-            while (current <= end) {
+            while (current <= adjustedEnd) {
                 const day = current.getDay();
                 const dateStr = current.toDateString();
                 if (day !== 5 && day !== 6 && !eidHolidays.includes(dateStr)) {
